@@ -1,0 +1,27 @@
+<form novalidate autocomplete="off" #form="ngForm" (submit)="onSubmit(form)">
+    <input type="hidden" name="bookId" [value]="service.formData.bookId" />
+    <div class="form-group">
+        <label>Título</label>
+        <input class="form-control form-control-lg" placeholder="Título" name="titulo"
+            #titulo="ngModel" [(ngModel)]="service.formData.titulo"
+            required [class.invalid]="titulo.invalid && titulo.touched">
+    </div>
+    <div class="form-group">
+        <label>Autor</label>
+        <input class="form-control form-control-lg" placeholder="Autor" name="autor"
+            #autor="ngModel" [(ngModel)]="service.formData.autor"
+            required [class.invalid]="autor.invalid && autor.touched">
+    </div>
+    
+        <div class="form-group">
+            <label>Editorial</label>
+            <input class="form-control form-control-lg" placeholder="Editorial" name="editorial"
+                #editorial="ngModel" [(ngModel)]="service.formData.editorial"
+                required [class.invalid]="editorial.invalid && editorial.touched">
+        </div>
+        
+    
+    <div class="form-group">
+        <button class="btn btn-info btn-lg btn-block" type="submit" [disabled]="form.invalid">Enviar</button>
+    </div>
+</form>
