@@ -35,7 +35,7 @@ namespace BooksWebApiAng
             });
             services.AddDbContext<BookContext>(options =>
             options.UseSqlite(Configuration.GetConnectionString("BooksDb")));
-            services.AddTransient<IBooksService, BooksService>();
+            services.AddScoped<IBooksService, BooksService>();
 
             // services.AddCors();
         }
