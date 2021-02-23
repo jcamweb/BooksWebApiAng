@@ -47,7 +47,7 @@ namespace BooksWebApiAng.Controllers
                 return NotFound();
             }
 
-            return book;
+            return Ok(book);
         }
 
         // PUT: api/Books/5
