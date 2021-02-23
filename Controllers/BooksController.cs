@@ -55,15 +55,23 @@ namespace BooksWebApiAng.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBook(int id, Book book)
         {
-            var lbook = await _booksService.PutBook(id,book);
-
-            if (lbook == null)
+            if (!ModelState.IsValid)
             {
-                _logger.LogError($"Error actualizando libro {book.BookId}");
-                return NotFound();
+                return BadRequest();
             }
+                else
+            {
+                var lbook = await _booksService.PutBook(id, book);
 
-            return Ok(lbook);
+                if (lbook == null)
+                {
+                    _logger.LogError($"Error actualizando libro {book.BookId}");
+                    return NotFound();
+                }
+
+                return Ok(lbook);
+            }
+            
         }
 
         // POST: api/Books
@@ -71,10 +79,14 @@ namespace BooksWebApiAng.Controllers
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook(Book book)
         {
-
-            var lbook = await _booksService.PostBook(book);
-            _logger.LogError($"Creado libro {book.BookId}");
-            return CreatedAtAction("GetBook", new { id = lbook.BookId }, lbook);
+            if (!ModelState.IsValid)
+            { return BadRequest(); }
+            else
+            {
+                var lbook = await _booksService.PostBook(book);
+                _logger.LogError($"Creado libro {book.BookId}");
+                return CreatedAtAction("GetBook", new { id = lbook.BookId }, lbook);
+            }
         }
 
         // DELETE: api/Books/5
