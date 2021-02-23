@@ -13,9 +13,8 @@ namespace BooksWebApiAng.Controllers
     {
         private readonly IBooksService _booksService;
         private readonly ILogger<BooksService> _logger;
-        //  private readonly List<Book> books = new List<Book>();
-
-        public BooksController(BookContext context, IBooksService booksService, ILogger<BooksService> logger)
+        
+        public BooksController(IBooksService booksService, ILogger<BooksService> logger)
         {
             _booksService = booksService;
             _logger = logger;
