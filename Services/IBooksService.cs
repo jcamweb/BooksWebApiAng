@@ -13,6 +13,6 @@ namespace BooksWebApiAng.Services
         Task<Book> GetBook(int id);
         Task<SaveBookResponse> PutBook(int id, BookUpdDto book);
         Task<SaveBookResponse> PostBook(Book book);
-        Task<Book> DeleteBook(int id);
+        Task<SaveBookResponse> DeleteBook(int id);
     }
 }

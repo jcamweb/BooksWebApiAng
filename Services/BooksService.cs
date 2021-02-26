@@ -20,11 +20,27 @@ namespace BooksWebApiAng.Services
             _unitOfWork = unitOfWork;
             
         }
-        public async Task<Book> DeleteBook(int id)
+        public async Task<SaveBookResponse> DeleteBook(int id)
         {
-            
-            
-            return await _booksrepository.DeleteBook(id);
+
+            var existingbook = await _booksrepository.FindByIdAsync(id);
+
+            if (existingbook == null)
+                return new SaveBookResponse("Book no encontrado.");
+
+            try
+            {
+                _booksrepository.DeleteBook(existingbook);
+                await _unitOfWork.CompleteAsync();
+
+                return new SaveBookResponse(existingbook);
+            }
+            catch (Exception ex)
+            {
+                
+                return new SaveBookResponse($"Error boorando book: {ex.Message}");
+            }
+
         }
 
         public async Task<Book> GetBook(int id)

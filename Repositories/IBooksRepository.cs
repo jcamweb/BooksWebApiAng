@@ -10,7 +10,7 @@ namespace BooksWebApiAng.Repositories
         Task<Book> GetBook(int id);
         void PutBook(Book book);
         Task<Book> PostBook(Book book);
-        Task<Book> DeleteBook(int id);
+        void DeleteBook(Book book);
         bool BookExist(int i);
         Task<Book> FindByIdAsync(int id);
     }

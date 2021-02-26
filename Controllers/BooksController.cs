@@ -103,17 +103,18 @@ namespace BooksWebApiAng.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
-            
-            var book = await _booksService.DeleteBook(id);
-            if (book == null)
+
+
+            var result = await _booksService.DeleteBook(id);
+
+            if (!result.Success)
             {
-                _logger.LogError($"Error borrando libro {book.BookId}");
-                return NotFound();
+                _logger.LogError($"Error borrando libro {result.Book.BookId}");
+                return BadRequest(result.Message);
             }
-
-           
-
-            return NoContent();
+            var bookResource = _mapper.Map<Book, BookDto>(result.Book);
+            return Ok(bookResource);
+                        
         }
 
        

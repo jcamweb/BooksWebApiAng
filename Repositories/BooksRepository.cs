@@ -14,26 +14,11 @@ namespace BooksWebApiAng.Repositories
         public BooksRepository(BookContext context, ILogger<BooksRepository> logger) : base(context)
         { _logger = logger; }
 
-        public async Task<Book> DeleteBook(int id)
+        public void DeleteBook(Book book)
         {
-            Book book;
-            try
-            {
-                book = await _context.Books.FindAsync(id);
-                if (book != null)
-                {
-                    _context.Books.Remove(book);
-                    await _context.SaveChangesAsync();
-                }
 
-            }
-            catch (Exception Ex)
-            {
-                book = null;
-                _logger.LogError($"Error borrande libro: {Ex}");
-            }
+            _context.Books.Remove(book);
 
-            return book;
         }
 
         public async Task<Book> GetBook(int id)
