@@ -1,9 +1,9 @@
-﻿using BooksWebApiAng.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿using BooksWebApiAng.Extensions;
+using BooksWebApiAng.Models;
+using BooksWebApiAng.DTO;
+using BooksWebApiAng.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BooksWebApiAng.Services
@@ -11,118 +11,87 @@ namespace BooksWebApiAng.Services
     public class BooksService : IBooksService
     {
 
-        private readonly BookContext _context;
-        private readonly ILogger<BooksService> _logger;
+        private readonly IBooksRepository _booksrepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public BooksService (BookContext context, ILogger<BooksService> logger)
+        public BooksService (IBooksRepository booksrepository, IUnitOfWork unitOfWork)
         {
-            _context = context;
-            _logger = logger;
+            _booksrepository = booksrepository;
+            _unitOfWork = unitOfWork;
+            
         }
         public async Task<Book> DeleteBook(int id)
         {
-            Book book;
-            try
-            {
-                 book = await _context.Books.FindAsync(id);
-                if (book != null)
-                {
-                    _context.Books.Remove(book);
-                    await _context.SaveChangesAsync();
-                }
-
-            }
-            catch(Exception Ex)
-            {
-                 book = null;
-                _logger.LogError($"Error borrande libro: {Ex}");
-            }
             
-            return book;
+            
+            return await _booksrepository.DeleteBook(id);
         }
 
         public async Task<Book> GetBook(int id)
         {
-            Book book;
-            try
-            {
-                book = await _context.Books.FindAsync(id);
-                if (book != null) return book;
-            }
-            catch
-            {
-                book = null;
-                
-            }
+            
 
-            return book;
+            return await _booksrepository.GetBook(id);
                         
         }
 
         public async Task<IEnumerable<Book>> GetBooks()
         {
-            List<Book> data;
-            try
-            {
-                _logger.LogInformation("Recuperando libros de bbdd");
-                 data = await _context.Books.ToListAsync();
-                _logger.LogInformation($"Recuperando {data.Count} libros");
-                return (data);
-                 
-            }
             
-            catch (Exception Ex)
 
-            {
-                _logger.LogError($"Error recuperando libros: {Ex}");
-                data = null;
-                return (data);
-            }
+            return await _booksrepository.GetBooks();
         }
 
-        public async Task<Book> PostBook(Book book)
+        public async Task<SaveBookResponse> PostBook(Book book)
         {
-            _context.Books.Add(book);
-            await _context.SaveChangesAsync();
-            return book;
-        }
-
-        public async Task<Book> PutBook(int id, Book book)
-        {
-            
-            if (id != book.BookId)
-            {
-                book = null;
-                return book;
-            }
-
-            _context.Entry(book).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _booksrepository.PostBook(book);
+                await _unitOfWork.CompleteAsync();
+
+                return new SaveBookResponse(book);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!BookExists(id))
-                {
-                    book = null;
-                    return book;
-                }
-                else
-                {
-                    throw;
-                }
+                
+                return new SaveBookResponse($"Error guardando book: {ex.Message}");
             }
 
-            return book;
+           
+           
         }
 
-        private bool BookExists(int id)
+        public async Task<SaveBookResponse> PutBook(int id, BookUpdDto book)
         {
-            return _context.Books.Any(e => e.BookId == id);
-        }
 
+
+
+            var existingBook = await _booksrepository.FindByIdAsync(id);
+
+            if (existingBook == null)
+                return new SaveBookResponse("Book no encontrado.");
+
+            existingBook.Autor = book.Autor;
+            existingBook.Titulo = book.Titulo;
+            existingBook.Editorial = book.Editorial;
+            try
+            {
+                _booksrepository.PutBook(existingBook);
+                await _unitOfWork.CompleteAsync();
+                return new SaveBookResponse(existingBook);
+            }
+
+            catch (Exception ex)
+            {
+                
+                return new SaveBookResponse($"Error actualizando book: {ex.Message}");
+            }
+
+           
+                      
+               
+        }
                
     }
 }

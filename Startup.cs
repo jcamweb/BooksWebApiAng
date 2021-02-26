@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using BooksWebApiAng.Services;
+using BooksWebApiAng.Repositories;
 
 namespace BooksWebApiAng
 {
@@ -33,9 +34,12 @@ namespace BooksWebApiAng
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+            services.AddAutoMapper(System.AppDomain.CurrentDomain.GetAssemblies());
             services.AddDbContext<BookContext>(options =>
             options.UseSqlite(Configuration.GetConnectionString("BooksDb")));
             services.AddScoped<IBooksService, BooksService>();
+            services.AddScoped<IBooksRepository, BooksRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // services.AddCors();
         }

@@ -1,9 +1,12 @@
-﻿using BooksWebApiAng.Models;
+﻿using AutoMapper;
+using BooksWebApiAng.DTO;
+using BooksWebApiAng.Models;
 using BooksWebApiAng.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BooksWebApiAng.Extensions;
 
 namespace BooksWebApiAng.Controllers
 {
@@ -13,11 +16,14 @@ namespace BooksWebApiAng.Controllers
     {
         private readonly IBooksService _booksService;
         private readonly ILogger<BooksService> _logger;
-        
-        public BooksController(IBooksService booksService, ILogger<BooksService> logger)
+        private readonly IMapper _mapper;
+
+
+        public BooksController(IBooksService booksService, ILogger<BooksService> logger, IMapper mapper)
         {
             _booksService = booksService;
             _logger = logger;
+            _mapper = mapper;
 
           
         }
@@ -25,11 +31,12 @@ namespace BooksWebApiAng.Controllers
        
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks()
         {
             
             var data = await _booksService.GetBooks();
-            return Ok(data);
+            var resources = _mapper.Map<IEnumerable<Book>, IEnumerable<BookDto>>(data);
+            return Ok(resources);
         }
 
 
@@ -53,40 +60,43 @@ namespace BooksWebApiAng.Controllers
         // PUT: api/Books/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook(int id, Book book)
+        public async Task<IActionResult> PutBook(int id, BookUpdDto book)
         {
             if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-                else
-            {
-                var lbook = await _booksService.PutBook(id, book);
+                return BadRequest(ModelState.GetErrorMessages());
 
-                if (lbook == null)
-                {
-                    _logger.LogError($"Error actualizando libro {book.BookId}");
-                    return NotFound();
-                }
 
-                return Ok(lbook);
-            }
+          //  var bookobj = _mapper.Map<BookDto, Book>(book);
+            var result = await _booksService.PutBook(id, book);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var lbook = _mapper.Map<Book, BookDto>(result.Book);
+            _logger.LogError($"Book actualizado {result.Book.BookId}");
+            return Ok(lbook);
+
+          
+            
             
         }
 
         // POST: api/Books
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook(Book book)
+        public async Task<ActionResult<Book>> PostBook(BookDto book)
         {
             if (!ModelState.IsValid)
-            { return BadRequest(); }
-            else
-            {
-                var lbook = await _booksService.PostBook(book);
-                _logger.LogError($"Creado libro {book.BookId}");
+             return BadRequest(ModelState.GetErrorMessages()); 
+                       
+                var bookobj = _mapper.Map<BookDto,Book>(book);
+                var result = await _booksService.PostBook(bookobj);
+            if (!result.Success)
+                return BadRequest(result.Message);
+                var lbook = _mapper.Map<Book, BookDto>(result.Book);
+            _logger.LogError($"Creado libro {lbook.BookId}");
                 return CreatedAtAction("GetBook", new { id = lbook.BookId }, lbook);
-            }
+            
         }
 
         // DELETE: api/Books/5
