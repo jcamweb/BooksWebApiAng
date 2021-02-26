@@ -81,8 +81,6 @@ namespace BooksWebApiAng.Services
         public async Task<SaveBookResponse> PutBook(int id, BookUpdDto book)
         {
 
-
-
             var existingBook = await _booksrepository.FindByIdAsync(id);
 
             if (existingBook == null)
