@@ -65,8 +65,7 @@ namespace BooksWebApiAng.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.GetErrorMessages());
 
-
-          //  var bookobj = _mapper.Map<BookDto, Book>(book);
+                      
             var result = await _booksService.PutBook(id, book);
 
             if (!result.Success)
