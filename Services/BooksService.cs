@@ -62,27 +62,36 @@ namespace BooksWebApiAng.Services
                         
         }
 
-        public async Task<IEnumerable<Book>> GetBooks()
+        public async Task<SaveBookResponse> GetBooks()
         {
-            
-            
-            try
-            {
-                _logger.LogInformation("Recuperando libros de bbdd");
-               var data = await _booksrepository.GetAllAsync();
-                _logger.LogInformation("Recuperados libros");
-                return (data);
 
-            }
 
-            catch (Exception Ex)
+            var existingbook = await _booksrepository.GetAllAsync();
 
-            {
-                _logger.LogError($"Error recuperando libros: {Ex}");
-                 return (null);
-            }
+            if (existingbook == null)
+                return new SaveBookResponse("Sin Books en datos.");
 
-                     
+
+            return new SaveBookResponse(await _booksrepository.GetAllAsync());
+
+
+            //try
+            //{
+            //    _logger.LogInformation("Recuperando libros de bbdd");
+            //   var data = await _booksrepository.GetAllAsync();
+            //    _logger.LogInformation("Recuperados libros");
+            //    return (data);
+
+            //}
+
+            //catch (Exception Ex)
+
+            //{
+            //    _logger.LogError($"Error recuperando libros: {Ex}");
+            //     return (null);
+            //}
+
+
         }
 
         public async Task<SaveBookResponse> PostBook(Book book)

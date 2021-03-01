@@ -33,13 +33,13 @@ namespace BooksWebApiAng.Controllers
         public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks()
         {
             
-            var data = await _booksService.GetBooks();
-            if (data == null)
+            var result = await _booksService.GetBooks();
+            if (!result.Success )
             {
                 _logger.LogError("Error recuperando libros");
                 return NotFound();
             }
-            var resources = _mapper.Map<IEnumerable<Book>, IEnumerable<BookDto>>(data);
+            var resources = _mapper.Map<IEnumerable<Book>, IEnumerable<BookDto>>(result.lBook);
             return Ok(resources);
         }
 

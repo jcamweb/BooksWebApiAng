@@ -1,15 +1,13 @@
-﻿using BooksWebApiAng.Models;
-using BooksWebApiAng.DTO;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using BooksWebApiAng.DTO;
 using BooksWebApiAng.Extensions;
+using BooksWebApiAng.Models;
+using System.Threading.Tasks;
 
 namespace BooksWebApiAng.Services
 {
     public interface IBooksService
     {
-        Task<IEnumerable<Book>> GetBooks();
+        Task<SaveBookResponse> GetBooks();
         Task<SaveBookResponse> GetBook(int id);
         Task<SaveBookResponse> PutBook(int id, BookUpdDto book);
         Task<SaveBookResponse> PostBook(Book book);

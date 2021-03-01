@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BooksWebApiAng.Extensions
+﻿namespace BooksWebApiAng.Extensions
 {
     public abstract class BaseResponse
     {
