@@ -5,6 +5,7 @@ using BooksWebApiAng.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace BooksWebApiAng.Services
 {
@@ -12,11 +13,13 @@ namespace BooksWebApiAng.Services
     {
 
         private readonly IBooksRepository _booksrepository;
+        private readonly ILogger<BooksService> _logger;
         private readonly IUnitOfWork _unitOfWork;
 
-        public BooksService (IBooksRepository booksrepository, IUnitOfWork unitOfWork)
+        public BooksService (IBooksRepository booksrepository, ILogger<BooksService> logger, IUnitOfWork unitOfWork)
         {
             _booksrepository = booksrepository;
+            _logger = logger;
             _unitOfWork = unitOfWork;
             
         }
@@ -30,7 +33,7 @@ namespace BooksWebApiAng.Services
 
             try
             {
-                _booksrepository.DeleteBook(existingbook);
+                _booksrepository.Delete(existingbook);
                 await _unitOfWork.CompleteAsync();
 
                 return new SaveBookResponse(existingbook);
@@ -43,19 +46,43 @@ namespace BooksWebApiAng.Services
 
         }
 
-        public async Task<Book> GetBook(int id)
+        public async Task<SaveBookResponse> GetBook(int id)
         {
             
+                      
+                var existingbook = await _booksrepository.FindByIdAsync(id);
 
-            return await _booksrepository.GetBook(id);
+                if (existingbook == null)
+                    return new SaveBookResponse("Book no encontrado.");
+                
+               
+                return new SaveBookResponse(await _booksrepository.GetByIdAsync(id));
+            
+                      
                         
         }
 
         public async Task<IEnumerable<Book>> GetBooks()
         {
             
+            
+            try
+            {
+                _logger.LogInformation("Recuperando libros de bbdd");
+               var data = await _booksrepository.GetAllAsync();
+                _logger.LogInformation("Recuperados libros");
+                return (data);
 
-            return await _booksrepository.GetBooks();
+            }
+
+            catch (Exception Ex)
+
+            {
+                _logger.LogError($"Error recuperando libros: {Ex}");
+                 return (null);
+            }
+
+                     
         }
 
         public async Task<SaveBookResponse> PostBook(Book book)
@@ -63,7 +90,7 @@ namespace BooksWebApiAng.Services
 
             try
             {
-                await _booksrepository.PostBook(book);
+                await _booksrepository.CreateAsync(book);
                 await _unitOfWork.CompleteAsync();
 
                 return new SaveBookResponse(book);
@@ -91,7 +118,7 @@ namespace BooksWebApiAng.Services
             existingBook.Editorial = book.Editorial;
             try
             {
-                _booksrepository.PutBook(existingBook);
+                _booksrepository.Update(existingBook);
                 await _unitOfWork.CompleteAsync();
                 return new SaveBookResponse(existingBook);
             }
@@ -102,8 +129,7 @@ namespace BooksWebApiAng.Services
                 return new SaveBookResponse($"Error actualizando book: {ex.Message}");
             }
 
-           
-                      
+                            
                
         }
                

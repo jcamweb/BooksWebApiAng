@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BooksWebApiAng.Models;
+﻿using BooksWebApiAng.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BooksWebApiAng.Repositories
 {
@@ -14,32 +13,37 @@ namespace BooksWebApiAng.Repositories
         public BooksRepository(BookContext context, ILogger<BooksRepository> logger) : base(context)
         { _logger = logger; }
 
-        public void DeleteBook(Book book)
+        public void Delete(Book book)
         {
-
-            _context.Books.Remove(book);
-
-        }
-
-        public async Task<Book> GetBook(int id)
-        {
-            Book book;
             try
             {
-                book = await _context.Books.FindAsync(id);
-                if (book != null) return book;
+                _context.Books.Remove(book);
             }
-            catch
+
+            catch (Exception ex)
             {
-                book = null;
 
+                throw new Exception($"{nameof(book)} no ha podido eliminarse: {ex.Message}");
             }
-
-            return book;
 
         }
 
-        public async Task<IEnumerable<Book>> GetBooks()
+        public async Task<Book> GetByIdAsync(int id)
+        {
+            try
+            {
+                return await _context.Books.FindAsync(id);
+            }
+
+
+            catch (Exception ex)
+            {
+                throw new Exception($"{nameof(GetByIdAsync)} no ha podido recuperar book: {ex.Message}");
+            }
+
+        }
+
+        public async Task<IEnumerable<Book>> GetAllAsync()
         {
             List<Book> data;
             try
@@ -58,34 +62,58 @@ namespace BooksWebApiAng.Repositories
                 data = null;
                 return (data);
             }
+
+
         }
 
-        public async Task<Book> PostBook(Book book)
+        public async Task<Book> CreateAsync(Book book)
         {
-           await _context.Books.AddAsync(book);
-            await _context.SaveChangesAsync();
-            return book;
+            if (book == null)
+            {
+                throw new ArgumentNullException($"{nameof(CreateAsync)} book no puede ser null");
+            }
+
+            try
+            {
+                await _context.Books.AddAsync(book);
+                await _context.SaveChangesAsync();
+                return book;
+            }
+
+            catch (Exception ex)
+            {
+                throw new Exception($"{nameof(book)} no ha podido añadirse: {ex.Message}");
+            }
+
         }
 
-        public void PutBook(Book book)
+        public void Update(Book book)
         {
 
+            if (book == null)
+            {
+                throw new ArgumentNullException($"{nameof(Update)} book null");
+            }
 
-            _context.Books.Update(book);
-           
+            try
+            {
+                _context.Books.Update(book);
+            }
 
 
-        }
+            catch (Exception ex)
+            {
+                throw new Exception($"{nameof(book)} no ha podido actualizarse: {ex.Message}");
+
+            }
+
+            }
 
         public async Task<Book> FindByIdAsync(int id)
         {
             return await _context.Books.FindAsync(id);
         }
 
-        public bool BookExist(int id)
-        {
-            return  _context.Books.Any(e => e.BookId == id);
-        }
-
+       
     }
 }

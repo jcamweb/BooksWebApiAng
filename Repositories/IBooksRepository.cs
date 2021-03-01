@@ -6,12 +6,11 @@ namespace BooksWebApiAng.Repositories
 {
     public interface IBooksRepository
     {
-        Task<IEnumerable<Book>> GetBooks();
-        Task<Book> GetBook(int id);
-        void PutBook(Book book);
-        Task<Book> PostBook(Book book);
-        void DeleteBook(Book book);
-        bool BookExist(int i);
+        Task<IEnumerable<Book>> GetAllAsync();
+        Task<Book> GetByIdAsync(int id);
+        void Update(Book book);
+        Task<Book> CreateAsync(Book book);
+        void Delete(Book book);
         Task<Book> FindByIdAsync(int id);
     }
 }

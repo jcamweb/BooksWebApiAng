@@ -24,7 +24,6 @@ namespace BooksWebApiAng.Controllers
             _booksService = booksService;
             _logger = logger;
             _mapper = mapper;
-
           
         }
 
@@ -35,6 +34,11 @@ namespace BooksWebApiAng.Controllers
         {
             
             var data = await _booksService.GetBooks();
+            if (data == null)
+            {
+                _logger.LogError("Error recuperando libros");
+                return NotFound();
+            }
             var resources = _mapper.Map<IEnumerable<Book>, IEnumerable<BookDto>>(data);
             return Ok(resources);
         }
@@ -46,15 +50,15 @@ namespace BooksWebApiAng.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetBook(int id)
         {
-            var book = await _booksService.GetBook(id);
+            var result = await _booksService.GetBook(id);
 
-            if (book == null)
+            if (!result.Success)
             {
-                _logger.LogError($"Error recuperando libro {book.BookId}");
+                _logger.LogError($"Error recuperando libro {result.Book.BookId}");
                 return NotFound();
             }
 
-            return Ok(book);
+            return Ok(result.Book);
         }
 
         // PUT: api/Books/5
@@ -74,8 +78,7 @@ namespace BooksWebApiAng.Controllers
             var lbook = _mapper.Map<Book, BookDto>(result.Book);
             _logger.LogError($"Book actualizado {result.Book.BookId}");
             return Ok(lbook);
-
-          
+        
             
             
         }
