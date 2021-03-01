@@ -1,11 +1,10 @@
-﻿using BooksWebApiAng.Extensions;
+﻿using BooksWebApiAng.DTO;
+using BooksWebApiAng.Extensions;
 using BooksWebApiAng.Models;
-using BooksWebApiAng.DTO;
 using BooksWebApiAng.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace BooksWebApiAng.Services
 {
@@ -74,23 +73,7 @@ namespace BooksWebApiAng.Services
 
             return new SaveBookResponse(await _booksrepository.GetAllAsync());
 
-
-            //try
-            //{
-            //    _logger.LogInformation("Recuperando libros de bbdd");
-            //   var data = await _booksrepository.GetAllAsync();
-            //    _logger.LogInformation("Recuperados libros");
-            //    return (data);
-
-            //}
-
-            //catch (Exception Ex)
-
-            //{
-            //    _logger.LogError($"Error recuperando libros: {Ex}");
-            //     return (null);
-            //}
-
+         
 
         }
 
