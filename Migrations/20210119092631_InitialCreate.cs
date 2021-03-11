@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using BooksWebApiAng.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BooksWebApiAng.Migrations
 {
@@ -20,6 +22,32 @@ namespace BooksWebApiAng.Migrations
                 {
                     table.PrimaryKey("PK_Books", x => x.BookId);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Books",
+                columns: new[] { "Titulo", "Autor", "Editorial" },
+                values: new object[] { "Contact", "Carl Sagan", "Nasa" });
+
+
+            migrationBuilder.InsertData(
+               table: "Books",
+               columns: new[] { "Titulo", "Autor", "Editorial" },
+               values: new object[] { "Título1", "Autor1", "Editorial1" });
+
+
+            migrationBuilder.InsertData(
+               table: "Books",
+               columns: new[] { "Titulo", "Autor", "Editorial" },
+               values: new object[] { "Título2", "Autor2", "Editorial2" });
+
+            migrationBuilder.InsertData(
+               table: "Books",
+               columns: new[] { "Titulo", "Autor", "Editorial" },
+               values: new object[] { "Título3", "Autor3", "Eidtorial3" });
+
+
+
+
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -27,5 +55,47 @@ namespace BooksWebApiAng.Migrations
             migrationBuilder.DropTable(
                 name: "Books");
         }
+
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<Book>()
+        //        .ToTable("Books");
+        //    modelBuilder.Entity<Book>()
+        // .Property(s => s.Editorial)
+        // .IsRequired(false);
+
+        //    modelBuilder.Entity<Book>()
+        //        .HasData(
+        //            new Book
+        //            {
+        //                Titulo = "Contact",
+        //                Autor = "Carl Sagan",
+        //                Editorial = "Nasa"
+        //            },
+        //            new Book
+        //            {
+        //                Titulo = "Título1",
+        //                Autor = "Autor1",
+        //                Editorial = "Editorial1"
+        //            },
+
+
+        //          new Book
+        //         {
+        //             Titulo = "Título2",
+        //             Autor = "Autor2",
+        //             Editorial = "Editorial2"
+        //         },
+
+        //           new Book
+        //           {
+        //               Titulo = "Título3",
+        //               Autor = "Autor3",
+        //               Editorial = "Editorial3"
+        //           }
+
+        //        );
+        //}
+
     }
 }
