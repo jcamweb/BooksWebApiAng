@@ -40,7 +40,7 @@ namespace BooksWebApiAng.Services
             catch (Exception ex)
             {
                 
-                return new SaveBookResponse($"Error boorando book: {ex.Message}");
+                return new SaveBookResponse($"Error borrando book: {ex.Message}");
             }
 
         }
