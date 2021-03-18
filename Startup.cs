@@ -24,7 +24,7 @@ namespace BooksWebApiAng
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BooksWebAPI", Version = "v1" });
@@ -48,14 +48,7 @@ namespace BooksWebApiAng
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
-            // add Cors
-
-           // app.UseCors(options => options
-
-           //.AllowAnyMethod()
-           //.AllowAnyHeader()
-           //.SetIsOriginAllowed(origin => true));// allow any origin 
-                
+                         
 
             if (env.IsDevelopment())
             {
